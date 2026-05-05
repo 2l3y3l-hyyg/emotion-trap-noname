@@ -1,0 +1,126 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #ededed; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+}
+.screen { display: none; width: 100%; max-width: 420px; min-height: 100vh; background: #ededed; position: relative; }
+.screen.active { display: flex; flex-direction: column; }
+
+.warning-box {
+    background: white; margin: 60px 20px 20px; padding: 25px; border-radius: 12px;
+    border-left: 4px solid #e94560; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+.warning-box h2 { color: #e94560; margin-bottom: 15px; }
+.warning-box p { color: #333; margin-bottom: 10px; line-height: 1.6; font-size: 0.95em; }
+.warning-box strong { color: #e94560; }
+.btn-primary {
+    display: block; width: calc(100% - 40px); margin: 20px auto; padding: 14px;
+    background: #07c160; color: white; border: none; border-radius: 8px; font-size: 1.1em;
+    cursor: pointer; transition: 0.2s;
+}
+.btn-primary:hover { background: #06ad56; }
+
+.status-bar { display: flex; background: white; padding: 8px 15px; border-bottom: 1px solid #d9d9d9; gap: 10px; flex-shrink: 0; }
+.status-item { flex: 1; }
+.status-label { font-size: 0.7em; color: #888; margin-bottom: 3px; }
+.status-bar-bg { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+.status-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+.mental { background: #4ecca3; width: 100%; }
+.career { background: #e94560; width: 100%; }
+.social { background: #f0a500; width: 100%; }
+
+.chat-container { flex: 1; overflow-y: auto; padding: 15px; background: #ededed; display: flex; flex-direction: column; }
+.message-list { display: flex; flex-direction: column; gap: 12px; }
+
+/* 消息行——统一使用 flex-start 对齐顶部 */
+.message-row {
+    display: flex; align-items: flex-start; gap: 8px; max-width: 85%;
+    margin-bottom: 4px;
+}
+/* 对方消息靠左，头像在最左，气泡在右 */
+.message-row.npc-row { align-self: flex-start; }
+/* 自己消息靠右，气泡在左，头像在右 */
+.message-row.self-row {
+    align-self: flex-end;
+}
+
+.avatar {
+    width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 1.2em; flex-shrink: 0;
+}
+.avatar.npc-avatar { background: #f0a500; color: white; }
+.avatar.self-avatar { background: #4ecca3; color: white; }
+
+/* 关键：自己的消息行中，让头像跑到最右边 */
+.self-row .avatar { order: 2; }
+.self-row .message { order: 1; }
+
+.message { padding: 10px 14px; border-radius: 8px; font-size: 0.95em; line-height: 1.5; word-break: break-word; }
+.message.npc { background: white; color: #000; border: 1px solid #ececec; }
+.message.self { background: #95ec69; color: #000; }
+.message.system { align-self: center; background: #f0f0f0; color: #666; font-size: 0.8em; max-width: 90%; text-align: center; border-radius: 4px; padding: 6px 12px; margin: 6px 0; }
+
+.input-area { flex-shrink: 0; background: white; border-top: 1px solid #d9d9d9; padding: 10px 15px 20px; }
+.choices-list { display: flex; flex-direction: column; gap: 8px; }
+.choice-btn {
+    display: block; width: 100%; padding: 12px; background: #f8f8f8; border: 1px solid #ddd;
+    border-radius: 20px; font-size: 0.95em; text-align: left; color: #333; cursor: pointer; transition: 0.2s;
+}
+.choice-btn:hover { background: #e0e0e0; border-color: #aaa; }
+.choice-btn:disabled { opacity: 0.6; pointer-events: none; }
+
+.call-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+    display: flex; justify-content: center; align-items: center; z-index: 1000; animation: pulseBg 0.8s infinite alternate;
+}
+.call-overlay.hidden { display: none; }
+@keyframes pulseBg { from { background: rgba(0,0,0,0.8); } to { background: rgba(20,10,10,0.9); } }
+.call-card { background: #1a1a2e; border: 2px solid #e94560; border-radius: 20px; padding: 30px; text-align: center; animation: shake 0.5s infinite; }
+@keyframes shake { 0%,100%{ transform: translateX(0); } 25%{ transform: translateX(-5px); } 75%{ transform: translateX(5px); } }
+.call-avatar { font-size: 60px; margin-bottom: 10px; }
+.call-name { font-size: 1.5em; color: #e94560; font-weight: bold; margin-bottom: 8px; }
+.call-status { color: #aaa; margin-bottom: 10px; animation: blink 0.6s infinite; }
+@keyframes blink { 50% { opacity: 0.3; } }
+.call-counter { color: #888; font-size: 0.85em; margin-bottom: 20px; }
+.call-btn { padding: 12px 30px; border-radius: 25px; border: none; font-size: 1em; cursor: pointer; background: #e94560; color: white; }
+
+.hint-toggle { position: absolute; top: 8px; right: 12px; z-index: 50; }
+.toggle-label { display: flex; align-items: center; gap: 4px; font-size: 0.7em; color: #888; cursor: pointer; }
+
+#analysis-screen { background: white; padding: 20px; overflow-y: auto; }
+#analysis-screen h2 { color: #333; margin: 20px 0; }
+.analysis-content { background: #f9f9f9; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+.analysis-item { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+.analysis-label { color: #e94560; font-weight: bold; margin-bottom: 6px; }
+.analysis-quote { background: #fff; border-left: 3px solid #f0a500; padding: 8px 12px; margin: 6px 0; font-style: italic; color: #555; }
+.analysis-explain { color: #666; font-size: 0.85em; line-height: 1.5; }
+
+.profile-card {
+    background: white; border-radius: 20px; padding: 25px; margin-top: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12); text-align: center; border: 1px solid #f0f0f0;
+    position: relative; overflow: hidden;
+}
+.profile-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+    background: linear-gradient(90deg, #e94560, #f0a500);
+}
+.profile-card h3 { color: #1a1a2e; font-size: 1.1em; margin: 15px 0 5px; }
+.profile-type {
+    font-size: 2.4em; font-weight: 800; margin: 15px 0;
+    background: linear-gradient(135deg, #e94560, #c73b54);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.profile-desc {
+    font-size: 0.95em; color: #444; line-height: 1.7; text-align: left;
+    background: #fafafa; padding: 15px; border-radius: 12px; margin: 15px 0;
+}
+.profile-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 0; }
+.profile-tag {
+    background: #f0f0f0; color: #e94560; padding: 6px 15px; border-radius: 20px;
+    font-size: 0.8em; font-weight: 600; letter-spacing: 0.5px;
+}
+.profile-note { font-size: 0.7em; color: #999; margin-top: 15px; }
+
+.shaking { animation: screenShake 0.4s infinite; }
+@keyframes screenShake { 0%,100%{ transform: translateX(0); } 25%{ transform: translateX(-3px); } 75%{ transform: translateX(3px); } }

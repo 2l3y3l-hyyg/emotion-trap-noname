@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>情感陷阱模拟器 | 你是何种操控下的幸存者？</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="start-screen" class="screen active">
+        <div class="warning-box">
+            <h2>⚠️ 警示模拟 · 情感陷阱</h2>
+            <p>本模拟基于真实事件改编。</p>
+            <p>你将体验一种被称为<strong>“情感操控”</strong>的行为模式。</p>
+            <p>请记住：<strong>任何时候你都有权拒绝、离开、不被绑架。</strong></p>
+            <p>结束时，系统会生成你的<strong>「情感操控人格档案」</strong>。</p>
+        </div>
+        <button id="start-btn" class="btn-primary">进入聊天</button>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div class="status-bar">
+            <div class="status-item"><span class="status-label">心理</span><div class="status-bar-bg"><div id="mental-bar" class="status-bar-fill mental"></div></div></div>
+            <div class="status-item"><span class="status-label">事业</span><div class="status-bar-bg"><div id="career-bar" class="status-bar-fill career"></div></div></div>
+            <div class="status-item"><span class="status-label">社交</span><div class="status-bar-bg"><div id="social-bar" class="status-bar-fill social"></div></div></div>
+        </div>
+
+        <div id="message-container" class="chat-container">
+            <div id="message-list" class="message-list"></div>
+        </div>
+
+        <div id="choices-container" class="input-area">
+            <div id="choices-list" class="choices-list"></div>
+        </div>
+
+        <div id="incoming-call-overlay" class="call-overlay hidden">
+            <div class="call-card">
+                <div class="call-avatar">📞</div>
+                <div class="call-name" id="call-caller-name">她</div>
+                <div class="call-status">持续来电中...</div>
+                <div class="call-counter" id="call-counter">第 1/5 次来电</div>
+                <div class="call-actions"><button id="call-reject-btn" class="call-btn reject">挂断</button></div>
+            </div>
+        </div>
+
+        <div class="hint-toggle">
+            <label class="toggle-label"><input type="checkbox" id="hint-toggle-checkbox" checked><span>显示分析提示</span></label>
+        </div>
+    </div>
+
+    <div id="analysis-screen" class="screen">
+        <h2>🧠 操控行为分析</h2>
+        <div id="analysis-content" class="analysis-content"></div>
+        <div id="personality-profile" class="profile-card"></div>
+        <button id="restart-btn" class="btn-primary">再次体验</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
