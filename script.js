@@ -17,6 +17,7 @@ function stopAllCalls() {
     if (overlay) overlay.classList.add('hidden');
 }
 
+// 加速版电话风暴：通话 1.5s，间隔 0.5s
 function triggerCallStorm(count = 5, callerName = '赵婉如') {
     stopCallFlag = false;
     let currentCall = 0;
@@ -27,7 +28,7 @@ function triggerCallStorm(count = 5, callerName = '赵婉如') {
     
     callNameEl.textContent = callerName;
     overlay.classList.remove('hidden');
-    vibrateDevice([1000,500,1000,500]);
+    vibrateDevice([1000, 300, 1000, 300]);
     
     function nextCall() {
         if (stopCallFlag) {
@@ -36,28 +37,37 @@ function triggerCallStorm(count = 5, callerName = '赵婉如') {
             return;
         }
         currentCall++;
-        if(currentCall > count) {
+        if (currentCall > count) {
             overlay.classList.add('hidden');
             vibrateDevice(0);
             return;
         }
         counterEl.textContent = `第 ${currentCall}/${count} 次来电`;
-        vibrateDevice([1000,300,1000,300]);
+        vibrateDevice([1000, 300, 1000, 300]);
         activeCallTimer = setTimeout(() => {
             if (stopCallFlag) return;
-            if(currentCall < count) {
-                nextCall();
+            if (currentCall < count) {
+                // 间隔缩短至 0.5 秒
+                setTimeout(nextCall, 500);
             } else {
                 nextCall();
             }
-        }, 3000);
+        }, 1500); // 通话仅 1.5 秒
     }
     
     nextCall();
     
     rejectBtn.onclick = () => {
-        stopAllCalls();
-        // 即使挂断，也可能继续打，但此刻停止当前风暴
+        // 挂断只隐藏当前弹窗，不停止后续来电
+        vibrateDevice(0);
+        overlay.classList.add('hidden');
+        // 0.5 秒后继续下一个来电
+        setTimeout(() => {
+            if (!stopCallFlag && currentCall < count) {
+                overlay.classList.remove('hidden');
+                nextCall();
+            }
+        }, 500);
     };
 }
 
@@ -109,7 +119,7 @@ function checkThresholds() {
     messages.forEach(msg => addMessage(msg, 'system'));
 }
 
-// ==================== 剧情树 ====================
+// ==================== 剧情树（选项含 stopHarass 标志） ====================
 const storyNodes = {
     intro: {
         npcMessage: "你好，我在平台上看到你的资料。你也是认真想找一段纯粹感情的人吧？现在的人都太浮躁了，但你的文字让我觉得你不一样 😊",
@@ -151,7 +161,7 @@ const storyNodes = {
         delay: 2600,
         systemMsg: "⏳ 索要固定时间。",
         choices: [
-            { text: "好，如果我有空的话", next: "meet_invite", cons: {mental:-5,career:-5,social:0}, personality: {compliance: 1} },
+            { text: "好，如果我有空的话", next: "meet_invite", cons: {mental:-5,career:-5,social:0}, personality: {compliance: 1}, stopHarass: true },
             { text: "我工作很忙，没法保证", next: "guilt_trip_time", cons: {mental:-10,career:0,social:-5}, personality: {boundary: 2} }
         ]
     },
@@ -160,7 +170,7 @@ const storyNodes = {
         delay: 2500,
         systemMsg: "🔄 道德绑架。",
         choices: [
-            { text: "我不是那个意思，好吧我尽量", next: "meet_invite", cons: {mental:-12,career:-8,social:-8}, personality: {compliance: 2} },
+            { text: "我不是那个意思，好吧我尽量", next: "meet_invite", cons: {mental:-12,career:-8,social:-8}, personality: {compliance: 2}, stopHarass: true },
             { text: "你真的误会了，我坚持我的界限", next: "status_request_rebel", cons: {mental:-15,career:-5,social:-10}, personality: {boundary: 2} }
         ]
     },
@@ -169,7 +179,7 @@ const storyNodes = {
         delay: 2700,
         systemMsg: "☕ 从线上转到线下，关系实质化。",
         choices: [
-            { text: "好，那就见一面", next: "first_date", cons: {mental:-5,career:-5,social:-5}, personality: {compliance: 1} },
+            { text: "好，那就见一面", next: "first_date", cons: {mental:-5,career:-5,social:-5}, personality: {compliance: 1}, stopHarass: true },
             { text: "见面太快了，还是先聊聊吧", next: "status_request", cons: {mental:-8,career:0,social:-3}, personality: {boundary: 1} }
         ]
     },
@@ -179,7 +189,7 @@ const storyNodes = {
         systemMsg: "💍 线下见面后迅速推动确认关系。",
         choices: [
             { text: "我觉得我们需要更多时间", next: "status_request", cons: {mental:-8,career:-5,social:-5}, personality: {boundary: 1} },
-            { text: "嗯，那我们在一起吧", next: "honeymoon_phase", cons: {mental:-5,career:-10,social:-10}, personality: {compliance: 3} }
+            { text: "嗯，那我们在一起吧", next: "honeymoon_phase", cons: {mental:-5,career:-10,social:-10}, personality: {compliance: 3}, stopHarass: true }
         ]
     },
     status_request: {
@@ -188,7 +198,7 @@ const storyNodes = {
         systemMsg: "💍 名分索取。",
         choices: [
             { text: "我觉得我们需要更多时间了解", next: "gift_request", cons: {mental:-8,career:-5,social:-5}, personality: {boundary: 1} },
-            { text: "好吧，那就在一起试试", next: "honeymoon_phase", cons: {mental:-5,career:-10,social:-10}, personality: {compliance: 3} }
+            { text: "好吧，那就在一起试试", next: "honeymoon_phase", cons: {mental:-5,career:-10,social:-10}, personality: {compliance: 3}, stopHarass: true }
         ]
     },
     status_request_rebel: {
@@ -205,7 +215,7 @@ const storyNodes = {
         delay: 2600,
         systemMsg: "🍯 用甜蜜要求开始建立服从。",
         choices: [
-            { text: "好，我给你买", next: "sweet_requests", cons: {mental:-5,career:-3,social:-3}, personality: {compliance: 2} },
+            { text: "好，我给你买", next: "sweet_requests", cons: {mental:-5,career:-3,social:-3}, personality: {compliance: 2}, stopHarass: true },
             { text: "我们才刚在一起，别急着要礼物吧", next: "gentle_retreat", cons: {mental:-8,career:-3,social:-3}, personality: {boundary: 1} }
         ]
     },
@@ -214,7 +224,7 @@ const storyNodes = {
         delay: 2800,
         systemMsg: "🎈 被拒后立刻退一步，用“孩子”制造温馨场景。",
         choices: [
-            { text: "好啊，我很乐意", next: "son_gift_talk", cons: {mental:-5,career:-3,social:-3}, personality: {emotionalGiving: 2} },
+            { text: "好啊，我很乐意", next: "son_gift_talk", cons: {mental:-5,career:-3,social:-3}, personality: {emotionalGiving: 2}, stopHarass: true },
             { text: "最近有点忙，可能去不了", next: "son_gift_talk", cons: {mental:-8,career:0,social:-5}, personality: {boundary: 1} }
         ]
     },
@@ -223,7 +233,7 @@ const storyNodes = {
         delay: 3200,
         systemMsg: "😢 深度示弱。",
         choices: [
-            { text: "以后我会多帮你的", next: "small_loan_intro", cons: {mental:-8,career:-5,social:-5}, personality: {emotionalGiving: 2} },
+            { text: "以后我会多帮你的", next: "small_loan_intro", cons: {mental:-8,career:-5,social:-5}, personality: {emotionalGiving: 2}, stopHarass: true },
             { text: "你确实挺辛苦的，但我们也得慢慢来", next: "small_loan_intro", cons: {mental:-5,career:-3,social:-3}, personality: {boundary: 1} }
         ]
     },
@@ -232,8 +242,8 @@ const storyNodes = {
         delay: 3000,
         systemMsg: "💰 第一次小额借钱。",
         choices: [
-            { text: "好，我先转给你", next: "small_loan_return", cons: {mental:-5,career:-3,social:-3}, personality: {compliance: 2} },
-            { text: "3000块？好吧，下不为例", next: "small_loan_return", cons: {mental:-3,career:-3,social:-3}, personality: {compliance: 1} }
+            { text: "好，我先转给你", next: "small_loan_return", cons: {mental:-5,career:-3,social:-3}, personality: {compliance: 2}, stopHarass: true },
+            { text: "3000块？好吧，下不为例", next: "small_loan_return", cons: {mental:-3,career:-3,social:-3}, personality: {compliance: 1}, stopHarass: true }
         ]
     },
     small_loan_return: {
@@ -249,7 +259,7 @@ const storyNodes = {
         delay: 2700,
         systemMsg: "💑 亲密称呼绑定。",
         choices: [
-            { text: "好啊，老婆 😊", next: "more_sweet_requests", cons: {mental:-5,career:-8,social:-8}, personality: {compliance: 3} },
+            { text: "好啊，老婆 😊", next: "more_sweet_requests", cons: {mental:-5,career:-8,social:-8}, personality: {compliance: 3}, stopHarass: true },
             { text: "还是自然一点吧，叫我名字就好", next: "reject_husband_gentle", cons: {mental:-8,career:-5,social:-5}, personality: {boundary: 2} }
         ]
     },
@@ -267,7 +277,7 @@ const storyNodes = {
         delay: 2500,
         systemMsg: "💳 小额垫付。",
         choices: [
-            { text: "好，我给你转", next: "sweet_praise", cons: {mental:-5,career:-5,social:-3}, personality: {compliance: 3} },
+            { text: "好，我给你转", next: "sweet_praise", cons: {mental:-5,career:-5,social:-3}, personality: {compliance: 3}, stopHarass: true },
             { text: "这不太合适吧", next: "sweet_guilt", cons: {mental:-12,career:-3,social:-5}, personality: {boundary: 2} }
         ]
     },
@@ -285,7 +295,7 @@ const storyNodes = {
         delay: 2700,
         systemMsg: "📈 较大开销。",
         choices: [
-            { text: "好，多少钱？", next: "money_crisis", cons: {mental:-5,career:-10,social:-5}, personality: {compliance: 3} },
+            { text: "好，多少钱？", next: "money_crisis", cons: {mental:-5,career:-10,social:-5}, personality: {compliance: 3}, stopHarass: true },
             { text: "这个数额太大了，我得想想", next: "sweet_guilt", cons: {mental:-10,career:-5,social:-5}, personality: {boundary: 2} }
         ]
     },
@@ -294,7 +304,7 @@ const storyNodes = {
         delay: 2500,
         systemMsg: "😢 情感绑架。",
         choices: [
-            { text: "好好好，我给你还不行吗", next: "money_crisis", cons: {mental:-15,career:-10,social:-8}, personality: {compliance: 3} },
+            { text: "好好好，我给你还不行吗", next: "money_crisis", cons: {mental:-15,career:-10,social:-8}, personality: {compliance: 3}, stopHarass: true },
             { text: "随便你怎么说，我不会给的", next: "online_harass_intro", cons: {mental:-20,career:-5,social:-10}, personality: {boundary: 3} }
         ]
     },
@@ -303,7 +313,7 @@ const storyNodes = {
         delay: 3500,
         systemMsg: "💸 核心借款。",
         choices: [
-            { text: "好，我尽量凑给你", next: "loan_accepted", cons: {mental:-15,career:-20,social:-15}, personality: {compliance: 3} },
+            { text: "好，我尽量凑给你", next: "loan_accepted", cons: {mental:-15,career:-20,social:-15}, personality: {compliance: 3}, stopHarass: true },
             { text: "这金额太大了，我真的没办法", next: "loan_refused", cons: {mental:-25,career:-15,social:-20}, personality: {boundary: 2} }
         ]
     },
@@ -312,7 +322,7 @@ const storyNodes = {
         delay: 2500,
         systemMsg: "🤝 借款后绑定。",
         choices: [
-            { text: "好，我也挺喜欢孩子的", next: "married_life", cons: {mental:-10,career:-10,social:-15}, personality: {compliance: 2} },
+            { text: "好，我也挺喜欢孩子的", next: "married_life", cons: {mental:-10,career:-10,social:-15}, personality: {compliance: 2}, stopHarass: true },
             { text: "我还没准备好见孩子", next: "post_loan_pushback", cons: {mental:-15,career:-15,social:-15}, personality: {boundary: 1} }
         ]
     },
@@ -322,7 +332,7 @@ const storyNodes = {
         systemMsg: "🚨 反弹。",
         onEnter: () => setTimeout(() => triggerCallStorm(10, '赵婉如'), 1500),
         choices: [
-            { text: "（不堪其扰，答应借钱）", next: "loan_from_harassment", cons: {mental:-25,career:-20,social:-20}, personality: {compliance: 2} },
+            { text: "（不堪其扰，答应借钱）", next: "loan_from_harassment", cons: {mental:-25,career:-20,social:-20}, personality: {compliance: 2}, stopHarass: true },
             { text: "（拉黑所有联系方式）", next: "block_lead_to_offline", cons: {mental:-20,career:-25,social:-25}, personality: {boundary: 3} }
         ]
     },
@@ -331,7 +341,7 @@ const storyNodes = {
         delay: 2500,
         systemMsg: "🔄 指责。",
         choices: [
-            { text: "好了好了，都听你的", next: "married_life", cons: {mental:-20,career:-15,social:-20}, personality: {compliance: 3} },
+            { text: "好了好了，都听你的", next: "married_life", cons: {mental:-20,career:-15,social:-20}, personality: {compliance: 3}, stopHarass: true },
             { text: "我真的受够了，我们分开吧", next: "block_lead_to_offline", cons: {mental:-30,career:-20,social:-25}, personality: {boundary: 2} }
         ]
     },
@@ -340,7 +350,7 @@ const storyNodes = {
         delay: 2800,
         systemMsg: "🤰 怀孕逼婚。",
         choices: [
-            { text: "好，我们结婚，我会负责", next: "married_aftermath", cons: {mental:-40,career:-30,social:-30}, personality: {compliance: 4} },
+            { text: "好，我们结婚，我会负责", next: "married_aftermath", cons: {mental:-40,career:-30,social:-30}, personality: {compliance: 4}, stopHarass: true },
             { text: "怀孕了？等等，我们需要谈谈", next: "married_aftermath", cons: {mental:-35,career:-35,social:-30}, personality: {chaos: 2} }
         ]
     },
@@ -349,7 +359,7 @@ const storyNodes = {
         delay: 2800,
         systemMsg: "🏠 上交收入。",
         choices: [
-            { text: "行，都听你的", next: "married_deeper", cons: {mental:-15,career:-50,social:-10}, personality: {compliance: 3} },
+            { text: "行，都听你的", next: "married_deeper", cons: {mental:-15,career:-50,social:-10}, personality: {compliance: 3}, stopHarass: true },
             { text: "辞职太大了，我不能放弃工作", next: "married_deeper", cons: {mental:-20,career:-20,social:-10}, personality: {boundary: 1} }
         ]
     },
@@ -358,7 +368,7 @@ const storyNodes = {
         delay: 2700,
         systemMsg: "💔 前夫介入。",
         choices: [
-            { text: "……（沉默接受）", next: "ending_marriage", cons: {mental:-30,career:-10,social:-20}, personality: {compliance: 3} }
+            { text: "……（沉默接受）", next: "ending_marriage", cons: {mental:-30,career:-10,social:-20}, personality: {compliance: 3}, stopHarass: true }
         ]
     },
     online_harass_intro: {
@@ -367,7 +377,7 @@ const storyNodes = {
         systemMsg: "📞 骚扰开始。",
         onEnter: () => setTimeout(() => triggerCallStorm(12, '赵婉如'), 1500),
         choices: [
-            { text: "（接电话，试着再次安抚）", next: "harassment_compromise_loop", cons: {mental:-20,career:-10,social:-10}, personality: {compliance: 2} },
+            { text: "（接电话，试着再次安抚）", next: "harassment_compromise_loop", cons: {mental:-20,career:-10,social:-10}, personality: {compliance: 2}, stopHarass: true },
             { text: "（拉黑她）", next: "block_lead_to_offline", cons: {mental:-15,career:-15,social:-15}, personality: {boundary: 3} }
         ]
     },
@@ -376,7 +386,7 @@ const storyNodes = {
         delay: 2500,
         systemMsg: "🔄 妥协换来得寸进尺。",
         choices: [
-            { text: "好，我给你买，别打了", next: "loop_deeper", cons: {mental:-25,career:-15,social:-15}, personality: {compliance: 3} },
+            { text: "好，我给你买，别打了", next: "loop_deeper", cons: {mental:-25,career:-15,social:-15}, personality: {compliance: 3}, stopHarass: true },
             { text: "这次绝对不行", next: "block_lead_to_offline", cons: {mental:-20,career:-20,social:-20}, personality: {boundary: 2} }
         ]
     },
@@ -386,7 +396,7 @@ const storyNodes = {
         systemMsg: "🔗 形成条件反射。",
         onEnter: () => setTimeout(() => triggerCallStorm(25, '赵婉如'), 2000),
         choices: [
-            { text: "……知道了", next: "loop_extreme", cons: {mental:-35,career:-20,social:-20}, personality: {compliance: 3} }
+            { text: "……知道了", next: "loop_extreme", cons: {mental:-35,career:-20,social:-20}, personality: {compliance: 3}, stopHarass: true }
         ]
     },
     loop_extreme: {
@@ -404,7 +414,7 @@ const storyNodes = {
         delay: 2400,
         systemMsg: "🔗 借钱换安宁。",
         choices: [
-            { text: "（转钱，心力交瘁）", next: "married_life", cons: {mental:-30,career:-25,social:-25}, personality: {compliance: 3} }
+            { text: "（转钱，心力交瘁）", next: "married_life", cons: {mental:-30,career:-25,social:-25}, personality: {compliance: 3}, stopHarass: true }
         ]
     },
     block_lead_to_offline: {
@@ -427,7 +437,7 @@ const storyNodes = {
         systemMsg: "💣 跳楼威胁。",
         onEnter: () => setTimeout(() => triggerCallStorm(10, '赵婉如'), 1000),
         choices: [
-            { text: "（出去见面，试图安抚）", next: "ending_lost_all", cons: {mental:-35,career:-50,social:-40}, personality: {chaos: 3} },
+            { text: "（出去见面，试图安抚）", next: "ending_lost_all", cons: {mental:-35,career:-50,social:-40}, personality: {chaos: 3}, stopHarass: true },
             { text: "（坚持不见，让警察处理）", next: "ending_silence", cons: {mental:-30,career:-40,social:-30}, personality: {boundary: 4} }
         ]
     },
@@ -436,7 +446,7 @@ const storyNodes = {
         delay: 2700,
         systemMsg: "💰 礼物换安静。",
         choices: [
-            { text: "多少钱？我给你转", next: "gift_accepted_calm", cons: {mental:-5,career:-5,social:-3}, personality: {compliance: 2} },
+            { text: "多少钱？我给你转", next: "gift_accepted_calm", cons: {mental:-5,career:-5,social:-3}, personality: {compliance: 2}, stopHarass: true },
             { text: "我觉得送礼物还太早", next: "online_harass_intro", cons: {mental:-10,career:-5,social:-5}, personality: {boundary: 2} }
         ]
     },
@@ -446,7 +456,7 @@ const storyNodes = {
         systemMsg: "🎁 骚扰逼买。",
         onEnter: () => setTimeout(() => triggerCallStorm(4, '赵婉如'), 2000),
         choices: [
-            { text: "好了好了，我给你买", next: "gift_accepted_calm", cons: {mental:-15,career:-10,social:-10}, personality: {compliance: 2} },
+            { text: "好了好了，我给你买", next: "gift_accepted_calm", cons: {mental:-15,career:-10,social:-10}, personality: {compliance: 2}, stopHarass: true },
             { text: "你再打我真报警了", next: "offline_threat", cons: {mental:-20,career:-25,social:-15}, personality: {boundary: 3} }
         ]
     },
@@ -473,7 +483,7 @@ const storyNodes = {
         delay: 2200,
         systemMsg: "⚡ 威胁曝光。",
         choices: [
-            { text: "你冷静，我们可以再说说", next: "puppet_entanglement", cons: {mental:-15,career:-20,social:-15}, personality: {chaos: 2} },
+            { text: "你冷静，我们可以再说说", next: "puppet_entanglement", cons: {mental:-15,career:-20,social:-15}, personality: {chaos: 2}, stopHarass: true },
             { text: "(删除账号，注销平台)", next: "ending_disappear", cons: {mental:-15,career:-20,social:-15}, personality: {boundary: 4} }
         ]
     },
@@ -491,7 +501,7 @@ const storyNodes = {
         systemMsg: "🤝 回应即被节奏带走。",
         onEnter: () => setTimeout(() => triggerCallStorm(6, '赵婉如'), 1500),
         choices: [
-            { text: "好，我转……我们重新开始", next: "harassment_compromise_loop", cons: {mental:-20,career:-10,social:-10}, personality: {compliance: 3} },
+            { text: "好，我转……我们重新开始", next: "harassment_compromise_loop", cons: {mental:-20,career:-10,social:-10}, personality: {compliance: 3}, stopHarass: true },
             { text: "我没钱了，别再逼我", next: "block_lead_to_offline", cons: {mental:-25,career:-15,social:-15}, personality: {boundary: 2} }
         ]
     },
@@ -567,7 +577,7 @@ const endingProfiles = {
         tags: ['#反复拉扯', '#人财两空', '#你已急哭']
     },
     silence: {
-        typeName: '断臂求生',
+        typeName: '无fuck说',
         description: '你选择了彻底沉默和断开连接，承受着巨大的心理压力和外界的误解，但你终于划清了边界。虽然阴影仍在，但你重新夺回了生活的主导权（不一定）。',
         tags: ['#彻底断联', '#永久拔网线', '#割肉', '#一次外向换来终生内向']
     },
@@ -625,8 +635,11 @@ function addChoices(choices) {
     choices.forEach(c => {
         const btn = document.createElement('button'); btn.className = 'choice-btn'; btn.textContent = c.text;
         btn.onclick = () => {
-            // 任何选择都停止当前来电
-            stopAllCalls();
+            // 只有标记为妥协的选项才停止电话
+            if (c.stopHarass) {
+                stopAllCalls();
+            }
+            // 即使非妥协，也可能由于剧情进入新节点触发新电话，不主动停止
 
             document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
             addMessage(c.text, 'self');
@@ -642,6 +655,7 @@ function addChoices(choices) {
                         addMessage(node.npcMessage, 'npc');
                         if(node.isEnding) {
                             currentEndingId = node.endingId || 'silence';
+                            stopAllCalls(); // 结局时强制停止所有电话
                             setTimeout(() => showAnalysis(), 1500);
                         } else {
                             addChoices(node.choices);
@@ -668,7 +682,6 @@ function showAnalysis() {
         <div class="profile-note">*以上结局基于你在此模拟中的关键选择推演而出。</div>`;
     elements.analysisContent.appendChild(pd);
 
-    // 仅保留状态警告
     if(gameState.career<30) {
         const n=document.createElement('p'); n.style.color='#e94560'; n.style.margin='10px 0';
         n.textContent='⚠️ 你已付出沉重的事业代价。';
