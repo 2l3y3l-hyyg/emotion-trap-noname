@@ -32,17 +32,9 @@ body {
 .chat-container { flex: 1; overflow-y: auto; padding: 15px; background: #ededed; display: flex; flex-direction: column; }
 .message-list { display: flex; flex-direction: column; gap: 12px; }
 
-/* 消息行——统一使用 flex-start 对齐顶部 */
-.message-row {
-    display: flex; align-items: flex-start; gap: 8px; max-width: 85%;
-    margin-bottom: 4px;
-}
-/* 对方消息靠左，头像在最左，气泡在右 */
+.message-row { display: flex; flex-direction: row; align-items: flex-start; gap: 8px; max-width: 85%; margin-bottom: 4px; }
 .message-row.npc-row { align-self: flex-start; }
-/* 自己消息靠右，气泡在左，头像在右 */
-.message-row.self-row {
-    align-self: flex-end;
-}
+.message-row.self-row { align-self: flex-end; flex-direction: row-reverse; }
 
 .avatar {
     width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center;
@@ -50,10 +42,6 @@ body {
 }
 .avatar.npc-avatar { background: #f0a500; color: white; }
 .avatar.self-avatar { background: #4ecca3; color: white; }
-
-/* 关键：自己的消息行中，让头像跑到最右边 */
-.self-row .avatar { order: 2; }
-.self-row .message { order: 1; }
 
 .message { padding: 10px 14px; border-radius: 8px; font-size: 0.95em; line-height: 1.5; word-break: break-word; }
 .message.npc { background: white; color: #000; border: 1px solid #ececec; }
