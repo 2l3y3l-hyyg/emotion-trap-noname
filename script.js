@@ -130,7 +130,7 @@ const storyNodes = {
         ]
     },
     share_story: {
-        npcMessage: "我离过一次婚，有个儿子。这些年一个人带孩子、创业，真的很累。有时候想找个人说说话都找不到。你愿意听我说这些吗？",
+        npcMessage: "我离过一次婚，有个儿子。这些年一个人带孩子、创业，真的很累。有时候想找个人说说话都找不到……你愿意听我说这些吗？",
         delay: 2500,
         systemMsg: "🎭 分享脆弱面是建立情感依赖的第一步。",
         choices: [
@@ -189,7 +189,7 @@ const storyNodes = {
         systemMsg: "💍 线下见面后迅速推动确认关系。",
         choices: [
             { text: "我觉得我们需要更多时间", next: "status_request", cons: {mental:-8,career:-5,social:-5}, personality: {boundary: 1} },
-            { text: "嗯，那我们在一起吧", next: "honeymoon_phase", cons: {mental:-5,career:-10,social:-10}, personality: {compliance: 3}, stopHarass: true }
+            { text: "嗯……算是吧", next: "honeymoon_phase", cons: {mental:-5,career:-10,social:-10}, personality: {compliance: 3}, stopHarass: true }
         ]
     },
     status_request: {
@@ -197,8 +197,8 @@ const storyNodes = {
         delay: 2800,
         systemMsg: "💍 名分索取。",
         choices: [
-            { text: "我觉得我们需要更多时间了解", next: "gift_request", cons: {mental:-8,career:-5,social:-5}, personality: {boundary: 1} },
-            { text: "好吧，那就在一起试试", next: "honeymoon_phase", cons: {mental:-5,career:-10,social:-10}, personality: {compliance: 3}, stopHarass: true }
+            { text: "我没有谈恋爱的打算", next: "gift_request", cons: {mental:-8,career:-5,social:-5}, personality: {boundary: 1} },
+            { text: "好，那就谈谈看吧", next: "honeymoon_phase", cons: {mental:-5,career:-10,social:-10}, personality: {compliance: 3}, stopHarass: true }
         ]
     },
     status_request_rebel: {
@@ -251,7 +251,7 @@ const storyNodes = {
         delay: 2500,
         systemMsg: "✅ 她按时还钱了。",
         choices: [
-            { text: "（她果然按时还钱了）", next: "call_me_husband", cons: {mental:0,career:0,social:0}, personality: {} }
+            { text: "钱收到了", next: "call_me_husband", cons: {mental:0,career:0,social:0}, personality: {} }
         ]
     },
     call_me_husband: {
@@ -259,8 +259,8 @@ const storyNodes = {
         delay: 2700,
         systemMsg: "💑 亲密称呼绑定。",
         choices: [
-            { text: "好啊，老婆 😊", next: "more_sweet_requests", cons: {mental:-5,career:-8,social:-8}, personality: {compliance: 3}, stopHarass: true },
-            { text: "还是自然一点吧，叫我名字就好", next: "reject_husband_gentle", cons: {mental:-8,career:-5,social:-5}, personality: {boundary: 2} }
+            { text: "呃，好吧……", next: "more_sweet_requests", cons: {mental:-5,career:-8,social:-8}, personality: {compliance: 3}, stopHarass: true },
+            { text: "还是别这样吧，叫名字就好", next: "reject_husband_gentle", cons: {mental:-8,career:-5,social:-5}, personality: {boundary: 2} }
         ]
     },
     reject_husband_gentle: {
@@ -269,7 +269,7 @@ const storyNodes = {
         systemMsg: "🌈 未来畅想包裹索取。",
         choices: [
             { text: "你都想那么远了……", next: "more_sweet_requests", cons: {mental:-10,career:-5,social:-5}, personality: {emotionalGiving: 2} },
-            { text: "结婚的事还早呢，先处着看吧", next: "more_sweet_requests", cons: {mental:-12,career:-5,social:-5}, personality: {boundary: 1} }
+            { text: "先谈谈看吧，想那么远干嘛", next: "more_sweet_requests", cons: {mental:-12,career:-5,social:-5}, personality: {boundary: 1} }
         ]
     },
     sweet_requests: {
@@ -291,16 +291,16 @@ const storyNodes = {
         ]
     },
     more_sweet_requests: {
-        npcMessage: "亲爱的，我最近想报个 EMBA 班提升自己，学费有点贵。你能不能支持我一下？以后我公司做大了，你就是最大的受益人。",
+        npcMessage: "亲爱的，我最近公司最近出了点问题。你能不能借我点钱周转一下？以后我公司做大了，你就是最大的受益人。",
         delay: 2700,
         systemMsg: "📈 较大开销。",
         choices: [
             { text: "好，多少钱？", next: "money_crisis", cons: {mental:-5,career:-10,social:-5}, personality: {compliance: 3}, stopHarass: true },
-            { text: "这个数额太大了，我得想想", next: "sweet_guilt", cons: {mental:-10,career:-5,social:-5}, personality: {boundary: 2} }
+            { text: "我手头也没多少钱……", next: "sweet_guilt", cons: {mental:-10,career:-5,social:-5}, personality: {boundary: 2} }
         ]
     },
     sweet_guilt: {
-        npcMessage: "你不爱我了是不是？我为你付出了那么多，你连这点钱都不肯花？我闺蜜都说我傻，找了你这么个抠门的男人 😢",
+        npcMessage: "你不爱我了是不是？我为你付出了那么多，你连这点都不肯付出？我闺蜜都说我傻，找了你这么个抠门的男人 😢",
         delay: 2500,
         systemMsg: "😢 情感绑架。",
         choices: [
@@ -309,7 +309,7 @@ const storyNodes = {
         ]
     },
     money_crisis: {
-        npcMessage: "亲爱的……我公司出大事了。资金链彻底断了，你能不能先借我10万周转？我们是一体的，你不会看着我死吧？😭",
+        npcMessage: "亲爱的……是这样的，我资金链彻底断了，能不能先借我10万块周转？我们是一体的，你不会看着我死吧？😭",
         delay: 3500,
         systemMsg: "💸 核心借款。",
         choices: [
@@ -318,7 +318,7 @@ const storyNodes = {
         ]
     },
     loan_accepted: {
-        npcMessage: "我就知道没看错人！周末陪我去看儿子吧，他总问起你。",
+        npcMessage: "我就知道没看错人！周末来看看我儿子吧，他总问起你。",
         delay: 2500,
         systemMsg: "🤝 借款后绑定。",
         choices: [
@@ -337,7 +337,7 @@ const storyNodes = {
         ]
     },
     post_loan_pushback: {
-        npcMessage: "钱都借了，你跟我说没准备好？你太让我寒心了。",
+        npcMessage: "我们都相处这么久了，你跟我说没准备好？太让我寒心了！",
         delay: 2500,
         systemMsg: "🔄 指责。",
         choices: [
@@ -351,7 +351,7 @@ const storyNodes = {
         systemMsg: "🤰 怀孕逼婚。",
         choices: [
             { text: "好，我们结婚，我会负责", next: "married_aftermath", cons: {mental:-40,career:-30,social:-30}, personality: {compliance: 4}, stopHarass: true },
-            { text: "怀孕了？等等，我们需要谈谈", next: "married_aftermath", cons: {mental:-35,career:-35,social:-30}, personality: {chaos: 2} }
+            { text: "怀孕了？也没睡过啊，谁的？", next: "married_aftermath", cons: {mental:-35,career:-35,social:-30}, personality: {chaos: 2} }
         ]
     },
     married_aftermath: {
@@ -360,11 +360,11 @@ const storyNodes = {
         systemMsg: "🏠 上交收入。",
         choices: [
             { text: "行，都听你的", next: "married_deeper", cons: {mental:-15,career:-50,social:-10}, personality: {compliance: 3}, stopHarass: true },
-            { text: "辞职太大了，我不能放弃工作", next: "married_deeper", cons: {mental:-20,career:-20,social:-10}, personality: {boundary: 1} }
+            { text: "我不能放弃工作", next: "married_deeper", cons: {mental:-20,career:-20,social:-10}, personality: {boundary: 1} }
         ]
     },
     married_deeper: {
-        npcMessage: "还有，我前夫最近总来看孩子，有时会住几天。你别介意。以后家里的事我说了算。",
+        npcMessage: "还有，我前夫每个月都要来看孩子，有时会住几天。你别介意。以后家里的事我说了算。",
         delay: 2700,
         systemMsg: "💔 前夫介入。",
         choices: [
@@ -444,7 +444,7 @@ const storyNodes = {
     gift_request: {
         npcMessage: "既然我们还在互相了解，那你愿不愿意帮个小忙？我看中了一条项链，就当生日礼物。你送了我，我保证不天天打电话了 🎁",
         delay: 2700,
-        systemMsg: "💰 礼物换安静。",
+        systemMsg: "💰 索要礼物。",
         choices: [
             { text: "多少钱？我给你转", next: "gift_accepted_calm", cons: {mental:-5,career:-5,social:-3}, personality: {compliance: 2}, stopHarass: true },
             { text: "我觉得送礼物还太早", next: "online_harass_intro", cons: {mental:-10,career:-5,social:-5}, personality: {boundary: 2} }
@@ -496,13 +496,13 @@ const storyNodes = {
         ]
     },
     puppet_entanglement: {
-        npcMessage: "我就知道你放不下我。那今天的事就不计较了，但你要补偿我。先转2000块表明你的诚意，然后我们慢慢聊 🎀",
+        npcMessage: "我就知道你放不下我。那今天的事就不计较了，但你要补偿我。我想喝杯咖啡，你帮我付款 🎀",
         delay: 2500,
         systemMsg: "🤝 回应即被节奏带走。",
         onEnter: () => setTimeout(() => triggerCallStorm(6, '赵婉如'), 1500),
         choices: [
-            { text: "好，我转……我们重新开始", next: "harassment_compromise_loop", cons: {mental:-20,career:-10,social:-10}, personality: {compliance: 3}, stopHarass: true },
-            { text: "我没钱了，别再逼我", next: "block_lead_to_offline", cons: {mental:-25,career:-15,social:-15}, personality: {boundary: 2} }
+            { text: "好，我付……", next: "harassment_compromise_loop", cons: {mental:-20,career:-10,social:-10}, personality: {compliance: 3}, stopHarass: true },
+            { text: "我不买，别再逼我了", next: "block_lead_to_offline", cons: {mental:-25,career:-15,social:-15}, personality: {boundary: 2} }
         ]
     },
     stop_service_end: {
@@ -536,7 +536,7 @@ const storyNodes = {
         endingId: 'silence'
     },
     ending_disappear: {
-        npcMessage: "你删号了？哼，算你跑得快。但你这辈子都别想在圈子里好混。",
+        npcMessage: "你删号了？哼，你这辈子都别想在圈子里好混。",
         delay: 2000,
         isEnding: true,
         endingId: 'disappear'
