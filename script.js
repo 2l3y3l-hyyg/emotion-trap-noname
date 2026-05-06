@@ -342,7 +342,7 @@ const storyNodes = {
         systemMsg: "🔄 指责。",
         choices: [
             { text: "好了好了，都听你的", next: "married_life", cons: {mental:-20,career:-15,social:-20}, personality: {compliance: 3}, stopHarass: true },
-            { text: "我真的受够了，我们分开吧", next: "block_lead_to_offline", cons: {mental:-30,career:-20,social:-25}, personality: {boundary: 2} }
+            { text: "我真的受够了，我们断联吧", next: "block_lead_to_offline", cons: {mental:-30,career:-20,social:-25}, personality: {boundary: 2} }
         ]
     },
     married_life: {
